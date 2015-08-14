@@ -71,7 +71,7 @@ class FuelClient(object):
         }]
         return self.process_result(ts.send())
 
-    def add_subscriber(self, email_address, data):
+    def add_subscriber(self, email_address, data, list_ids=None):
         sub = ET_Subscriber()
         sub.auth_stub = self.client
         sub.props = {
@@ -79,8 +79,13 @@ class FuelClient(object):
             'SubscriberKey': email_address,
             'Attributes': self.build_attributes(data)
         }
+        if list_ids:
+            sub.props['Lists'] = self.build_lists(list_ids)
         response = sub.post()
         return self.process_result(response)
+
+    def build_lists(self, list_ids):
+        return [{'ID': list_id} for list_id in list_ids]
 
 
 class DebugFuelClient(object):
